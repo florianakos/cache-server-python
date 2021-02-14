@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  dynamodb:
+    command: "-jar DynamoDBLocal.jar -sharedDb -optimizeDbBeforeStartup -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+  cache_server:
+    build: .
+    container_name: cache-server
+    ports:
+      - "8888:8888"
+    environment:
+      - DOCKER_COMPOSE=true
+      - DYNAMODB_HOST=dynamodb
+      - DYNAMODB_PORT=8000
+      - VT_API_KEY=${VT_API_KEY}
+    volumes:
+      - "~/.aws:/home/app/.aws"
+    depends_on:
+      - dynamodb
+    links:
+      - dynamodb
