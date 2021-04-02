@@ -8,13 +8,9 @@ services:
       - "4571:4571"
     environment:
       - SERVICES=dynamodb
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - HOST_TMP_FOLDER=${TMPDIR}
-    volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
   cache_server:
     build: .
-    container_name: cache-server
+    container_name: cache-server-python
     ports:
       - "8888:8888"
     environment:
