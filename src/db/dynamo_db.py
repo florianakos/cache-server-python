@@ -2,14 +2,16 @@ from decimal import Decimal
 import boto3
 import json
 import os
+from botocore.config import Config
+
+AWS_CONF = Config(region_name='eu-west-1', retries={'max_attempts': 3, 'mode': 'standard'})
 
 
 class DynamoDB:
 
     def __init__(self):
         if self._in_docker_compose():
-            boto3.setup_default_session(profile_name="localstack")
-            self.dynamodb = boto3.resource('dynamodb', endpoint_url=self._localstack_endpoint())
+            self.dynamodb = boto3.resource('dynamodb', endpoint_url=self._localstack_endpoint(), config=AWS_CONF)
         else:
             self.dynamodb = boto3.resource('dynamodb')
 
